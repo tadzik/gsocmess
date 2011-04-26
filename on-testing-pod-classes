@@ -1,0 +1,35 @@
+2204   tadzik | but I don't think I have anything to report anyway, besides
+              | GSoC of course, but that's nothing to be talking about so far
+2211    masak | tadzik: tell us your thoughts about it.
+2211    masak | what's the first test you'll be writing? :)
+2213   tadzik | load.t for the POD classes :>
+2213   tadzik | I still think about what is the way to test them so the tests
+              | will make sense
+2214   tadzik | surely I'll look how other implementors have done it  
+2216    masak | test behaviours. that way, you don't have to mock a lot, and
+              | you'll get a rich API.
+2216   tadzik | test behaviours?  
+2216   tadzik | I may appear to be thinking a bit slow, I've been celebrating a
+              | bit :)
+2217    masak | yeah, there's a way to do something to an object, and then
+              | check with getter methods that the change had some effect.
+2217    masak | try to avoid that ;)
+2217   tadzik | oh that's a bit stupid :)
+2217    masak | much better if the object actually *responds* somehow.
+2217   tadzik | that's rather testing how classes work in Perl 6 :)
+2218    masak | aye.
+2218   tadzik | well, the only thing making sense to test is where the class is
+              | something more than just a container
+2218    masak | a Pod parser is basically a filter. filters are very
+              | well-suited for testing.
+2219    jnthn | tadzik: I'll be very happy to assist with the .WHO wiring when
+              | you get there, fwiw. :)
+2219    masak | not to mention the .HOW wiring ;)
+2219   tadzik | masak: well, the Pod parser. But the Pod Nodes, the
+              | representation?
+2219   tadzik | it's a prerequisite for the parser, and that's the first target
+              | of mine
+2219    masak | tadzik: hm. I guess they'd need to have getters.
+2220    masak | tadzik: but much more important to test whether they serialize 
+              | correctly, etc.
+2220   tadzik | oh, right      
