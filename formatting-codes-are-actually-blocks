@@ -1,0 +1,22 @@
+S26 says:
+Formatting codes are themselves a type of block, and most of them may
+nest sequences of any other type of block (most often, other formatting
+codes). In particular, you can nest comment blocks in the middle of a
+formatting code.
+
+Seems that the Perl 5 module Perl6::Pod has the same feeling:
+
+    =head1 DESCRIPTION
+    Perl6::Pod::FormattingCode - base class for formatting code
+    =cut
+    use warnings;
+    use strict;
+    use Perl6::Pod::Block;
+    use base 'Perl6::Pod::Block';
+
+So it says.
+
+That said, it seems like the only thing which _isn't_ a Pod6::Block are
+the directives like =use, =config, =encoding etc. A further investigation
+will show whether they're really needed to be kept as a Pod nodes at all.
+Maybe just a class attribute of a main node will do? Or nothing at all?
