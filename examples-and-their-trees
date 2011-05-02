@@ -20,7 +20,7 @@ Pod6::Block(
                                 "(...)",
                                 "That flag is ",
                                 Pod6::FormattingCode::K(
-                                   content => "--doc",
+                                   content => [ "--doc" ],
                                 ),
                                 ".",
                               ],
@@ -109,7 +109,7 @@ Pod6::Block(
     Pod6::Block::Para(
         content => [
                      "This is Pod too. Specifically, this is a simple",
-                     Pod6::FormattingCode::C(content => "para"),
+                     Pod6::FormattingCode::C(content => [ "para" ]),
                      "block",
                    ],
     ),
