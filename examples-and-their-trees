@@ -10,21 +10,21 @@ is K<--doc>.
 =end pod
 
 Pod6::Block(
-    content => Pod6::Block::Heading(
-                   level => 1,
-                   content => [ "How Pod is parsed and processed" ],
-               ),
-               # a simple paragraph
-               Pod6::Block::Para(
-                   content => [ "Pod is just a collection of bla bla",
-                                "(...)",
-                                "That flag is ",
-                                Pod6::FormattingCode::K(
-                                   content => [ "--doc" ],
-                                ),
-                                ".",
-                              ],
-               ),
+    content => [
+        Pod6::Block::Heading(
+            level => 1,
+            content => [ "How Pod is parsed and processed" ],
+        ),
+        # a simple paragraph
+        Pod6::Block::Para(
+            content => [ "Pod is just a collection of bla bla",
+                "(...)",
+                "That flag is ",
+                Pod6::FormattingCode::K(content => [ "--doc" ]),
+                ".",
+            ],
+        ),
+    ],
 );
 
 =======================================================================
@@ -41,16 +41,21 @@ Pod6::Block(
 =end pod
 
 Pod6::Block(
-    content => Pod6::Block::Semantic::VERSION(
-        Pod6::Block::Table(
-            caption => Any(), # or whatever works
-            content => [      # in a table, content is an array of rows
-                            [ "Maintainer:",   "Damian Conway" ],
-                            [ "Date:",         "9 Apr 2005"    ],
-                            [ "Last Modified", "31 Jul 2010"   ],
-                       ],
+    content => [
+        Pod6::Block::Semantic::VERSION(
+            content => [
+                Pod6::Block::Table(
+                    caption => Any(), # or whatever works
+                    content => [
+                        # in a table, content is an array of rows
+                        [ "Maintainer:",   "Damian Conway" ],
+                        [ "Date:",         "9 Apr 2005"    ],
+                        [ "Last Modified", "31 Jul 2010"   ],
+                    ],
+                ),
+            ],
         ),
-    ),
+    ],
 );
 
 =======================================================================
@@ -72,19 +77,21 @@ Pod6::Block(
 =end pod
 
 Pod6::Block(
-    Pod6::Block::Code(
-        allowed => [ Pod6::FormattingCode::B ],
-        # Pod6::Block::Code.content is just a literal string,
-        # only the .allowed things are actually cared about
-        content => [
-                    Pod6::FormattingCode::B(content => ["=begin pod"]),
-                    "\n\n=head1 A heading\nThis is Pod too.",
-                    "Specifically, this is a simple C<para> block\n\n",
-                    "    $this = pod('also');  # Specifically, a code ",
-                    "block\n\n",
-                    Pod6::FormattingCode::B(content => ["=end pod"]),
-                   ], 
-    ),
+    content => [
+        Pod6::Block::Code(
+            allowed => [ Pod6::FormattingCode::B ],
+            # Pod6::Block::Code.content is just a literal string,
+            # only the .allowed things are actually cared about
+            content => [
+                Pod6::FormattingCode::B(content => ["=begin pod"]),
+                "\n\n=head1 A heading\nThis is Pod too.",
+                "Specifically, this is a simple C<para> block\n\n",
+                "    $this = pod('also');  # Specifically, a code ",
+                "block\n\n",
+                Pod6::FormattingCode::B(content => ["=end pod"]),
+            ], 
+        ),
+    ],
 );
 
 =======================================================================
@@ -102,18 +109,22 @@ This is Pod too. Specifically, this is a simple C<para> block
 =end pod
 
 Pod6::Block(
-    Pod6::Block::Heading(
-        level => 1,
-        content => [ "A heading" ],
-    ),
-    Pod6::Block::Para(
-        content => [
-                     "This is Pod too. Specifically, this is a simple",
-                     Pod6::FormattingCode::C(content => [ "para" ]),
-                     "block",
-                   ],
-    ),
-    Pod6::Block::Code(
-        content => [ "$this = pod('also');  # Specifically, a code block" ],
-    ),
+    content => [
+        Pod6::Block::Heading(
+            level => 1,
+            content => [ "A heading" ],
+        ),
+        Pod6::Block::Para(
+            content => [
+                "This is Pod too. Specifically, this is a simple",
+                Pod6::FormattingCode::C(content => [ "para" ]),
+                "block",
+            ],
+        ),
+        Pod6::Block::Code(
+            content => [
+                "$this = pod('also');  # Specifically, a code block"
+            ],
+        ),
+    ],
 );
