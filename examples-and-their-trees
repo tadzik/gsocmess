@@ -1,0 +1,119 @@
+=begin pod
+
+=head1 How Pod is parsed and processed
+
+Pod is just a collection of specialized forms of Perl 6 comment. Every
+Perl 6 implementation must provide a special command-line flag that
+locates, parses, and processes Pod to produce documentation. That flag
+is K<--doc>.
+
+=end pod
+
+Pod6::Block(
+    content => Pod6::Block::Heading(
+                   level => 1,
+                   content => [ "How Pod is parsed and processed" ],
+               ),
+               # a simple paragraph
+               Pod6::Block::Para(
+                   content => [ "Pod is just a collection of bla bla",
+                                "(...)",
+                                "That flag is ",
+                                Pod6::FormattingCode::K(
+                                   content => "--doc",
+                                ),
+                                ".",
+                              ],
+               ),
+);
+
+=======================================================================
+
+=begin pod
+
+=begin VERSION
+    =table
+        Maintainer:     Damian Conway
+        Date:           9 Apr 2005
+        Last Modified:  31 Jul 2010
+=end VERSION
+
+=end pod
+
+Pod6::Block(
+    content => Pod6::Block::Semantic::VERSION(
+        Pod6::Block::Table(
+            caption => Any(), # or whatever works
+            content => [      # in a table, content is an array of rows
+                            [ "Maintainer:",   "Damian Conway" ],
+                            [ "Date:",         "9 Apr 2005"    ],
+                            [ "Last Modified", "31 Jul 2010"   ],
+                       ],
+        ),
+    ),
+);
+
+=======================================================================
+
+=begin pod
+
+=begin code :allow<B>
+    B<=begin pod>
+
+    =head1 A heading
+
+    This is Pod too. Specifically, this is a simple C<para> block
+
+        $this = pod('also');  # Specifically, a code block
+
+    B<=end pod>
+=end code
+
+=end pod
+
+Pod6::Block(
+    Pod6::Block::Code(
+        allow => [ Pod6::FormattingCode::B ],
+        # Pod6::Block::Code.content is just a literal string,
+        # only the .allow things are actually cared about
+        content => [
+                    Pod6::FormattingCode::B(content => ["=begin pod"]),
+                    "\n\n=head1 A heading\nThis is Pod too.",
+                    "Specifically, this is a simple C<para> block\n\n",
+                    "    $this = pod('also');  # Specifically, a code ",
+                    "block\n\n",
+                    Pod6::FormattingCode::B(content => ["=end pod"]),
+                   ], 
+    ),
+);
+
+=======================================================================
+
+# but
+
+=begin pod
+
+=head1 A heading
+
+This is Pod too. Specifically, this is a simple C<para> block
+
+    $this = pod('also');  # Specifically, a code block
+
+=end pod
+
+Pod6::Block(
+    Pod6::Block::Heading(
+        level => 1,
+        content => [ "A heading" ],
+    ),
+    Pod6::Block::Para(
+        content => [
+                     "This is Pod too. Specifically, this is a simple",
+                     Pod6::FormattingCode::C(content => "para"),
+                     "block",
+                   ],
+    ),
+    Pod6::Block::Code(
+        content => [ "$this = pod('also');  # Specifically, a code block" ],
+    ),
+);
