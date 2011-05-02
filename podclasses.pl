@@ -11,7 +11,7 @@ class Pod6::Block::Heading is Pod6::Block {
 }
 
 class Pod6::Block::Code is Pod6::Block {
-    has @.allow;
+    has @.allowed;
 }
 
 class Pod6::Block::Table is Pod6::Block {

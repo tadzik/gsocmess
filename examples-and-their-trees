@@ -73,9 +73,9 @@ Pod6::Block(
 
 Pod6::Block(
     Pod6::Block::Code(
-        allow => [ Pod6::FormattingCode::B ],
+        allowed => [ Pod6::FormattingCode::B ],
         # Pod6::Block::Code.content is just a literal string,
-        # only the .allow things are actually cared about
+        # only the .allowed things are actually cared about
         content => [
                     Pod6::FormattingCode::B(content => ["=begin pod"]),
                     "\n\n=head1 A heading\nThis is Pod too.",
