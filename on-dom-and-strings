@@ -1,0 +1,26 @@
+2148      moritz | time will tell if it might be easier for the user if all  
+                 | entries in @.content do a common role
+2149      moritz | like in the browser DOM, all nodes support some common
+                 | operations
+2150      moritz | I can understand the beauty of stuffing in strings, arrays
+                 | etc.
+2151      moritz | but as a user it most likely means that you have to do type
+                 | checks (or given/when based on type) every time you access
+                 | it
+2154      tadzik | moritz: regarding your previous sentence, so things like
+                 | Pod6::Content, Pod6::Text etc?
+2157      moritz | tadzik: maybe. Or maybe just Pod6::Block nodes that have
+                 | text instead of contents
+2157      moritz | hm, sounds more like a separate Pod6::Text node type
+2157      tadzik | yeah
+2158      tadzik | hmm, now I don't see how it'd be any different from a plain 
+                 | Str
+2159      moritz | it's only useful if it has some unified behavior together  
+                 | with the rest of the nodes
+2159      tadzik | yeah, I'm thinking about it
+2159      moritz | which is why I don't yet know if it's worth the trouble
+2159      moritz | so, just wait and see
+2200      tadzik | yeah, time will tell
+
+
+# see also: on-redesign-and-testing

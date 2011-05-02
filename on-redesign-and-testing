@@ -1,0 +1,16 @@
+1956 tadzik | so I design all these needed Pod classes, and weeks later while
+            | implementing the parser I can clearly see that I was wrong and I
+            | need completely different things so I modify stuff deeply. That's
+            | fine, isn't it?
+1957  masak | guess so.
+1957  masak | what is it you thing you'll need to redesign so deeply?
+1957  masak | think*
+1958 tadzik | well, I don't know now :) I feel a bit like a blind one in a fog
+            | right now, "what may I need"
+2002  masak | ok, let me scare you and soothe you at the same time :)
+2002  masak | it's quite possible that what you describe will happen.
+2003  masak | and the better the test coverage, the less of a problem you'll
+            | have moving from an old model to one you like better.
+2003  masak | so write tests! :)                               
+2005  masak | I think I went through five or so redesigns of GGE. but the tests
+            | kept me on track. without them, I'd have given up many times
