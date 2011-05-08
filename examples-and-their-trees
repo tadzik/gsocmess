@@ -128,3 +128,34 @@ Pod6::Block(
         ),
     ],
 );
+
+======================================================================
+
+=begin pod
+    =item1 # Liberty
+    =item1 # Death
+    =item1 # Beer
+
+    The tools are:
+
+    =item1 # Revolution
+    =item1 # Deep-fried peanut butter sandwich
+    =item1 # Keg
+=end pod
+
+Pod6::Block(
+    content => [
+        Pod6::List(
+            elements => [ 'Liberty', 'Death', 'Beer' ],
+        ),
+        Pod6::Block::Para( content => [ 'The tools are:' ] ),
+        Pod6::List(
+            elements => [ 'Revolution',
+                          'Deep-fried peanut butter sandwich',
+                          'Keg',
+            ],
+        ),
+    ],
+);
+
+======================================================================
