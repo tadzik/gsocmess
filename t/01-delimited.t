@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 15;
+plan 16;
 
 my $x = q[
 =begin foo
@@ -51,7 +51,6 @@ $x = q[
     =end something
 ];
 $r = Pod6::parse($x);
-say $r.perl;
 isa_ok $r.content[0], Pod6::Block, "nested blocks work";
 is $r.content[0].content[0], "toot tooot!", "and their content";
 
@@ -78,13 +77,13 @@ $x = q[
 ];
 
 $r = Pod6::parse($x);
-say $r.perl;
-isa_ok $r.content, Pod6::Block;
-is $r.content[0].content[0],
+isa_ok $r, Pod6::Block;
+is $r.content.elems, 5, '5 sub-nodes in foo';
+is $r.content[0],
    'and so, all of the villages chased Albi, The Racist Dragon, ' ~
    'into the very cold and very scary cave';
-is $r.content[0].content[1],
+is $r.content[1],
    'and it was so cold and so scary in there, that Albi began to cry';
-is $r.content[0].content[1].content[0], "Dragon Tears!";
-is $r.content[0].content[2], "Which, as we all know...";
-is $r.content[0].content[3], "Turn into Jelly Beans!";
+is $r.content[2].content[0], "Dragon Tears!";
+is $r.content[3], "Which, as we all know...";
+is $r.content[4].content[0], "Turn into Jelly Beans!";

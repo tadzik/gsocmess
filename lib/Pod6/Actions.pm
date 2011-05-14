@@ -49,20 +49,19 @@ class Pod6::Actions {
     }
 
     method pod_content:sym<text>($/) {
-        my $t = $<pod_text_para>».ast.map({
-            $_.subst(/\s+/, ' ', :g).subst(/^^\s*/, '').subst(/\s*$$/, '')
-        });
-        make $t;
+        make $<pod_text_para>».ast.values;
     }
 
     method pod_text_para($/) {
-        make $<text>.Str;
+        make $<text>.Str.subst(/\s+/, ' ', :g).subst(/^^\s*/, '').subst(/\s*$$/, '');
     }
 
     method pod_block:sym<delimited>($/) {
         my $block;
-        my @content = $<pod_content> ?? $<pod_content>[0].ast.flat
-                                     !! Nil;
+        my @content;
+        for $<pod_content>».ast {
+            @content.push: |$_
+        }
         # XXX: Should be Pod::Block::Named::$type somehow
         $block = Pod6::Block::Named.new(content => @content);
         make $block;

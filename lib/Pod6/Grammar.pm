@@ -6,11 +6,14 @@ grammar Pod6::Grammar {
     proto token pod_content { <...> }
 
     token pod_content:sym<block> {
+        \n*
         <pod_block>
+        \n*
     }
 
     # any number of paragraphs of text
     token pod_content:sym<text> {
+        \n*
         <pod_text_para> ** \n+
         \n*
     }
@@ -25,7 +28,7 @@ grammar Pod6::Grammar {
     token pod_block:sym<delimited> {
         ^^ \h* '=begin' \h+ <ident> \h* \n
         [
-         <pod_content>?
+         <pod_content> *
          ^^ \h* '=end' \h+ $<ident> \h* \n
 #         ||  <.panic: '=begin without matching =end'>
         ]
