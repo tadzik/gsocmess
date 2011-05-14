@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 7;
+plan 15;
 
 my $x = q[
 =begin foo
@@ -41,3 +41,50 @@ two
 $r = Pod6::parse($x);
 is $r.content[0], "paragraph one", 'paragraphs ok, 1/2';
 is $r.content[1], "paragraph two", 'paragraphs ok, 2/2';
+
+# nesting
+$x = q[
+    =begin something
+        =begin somethingelse
+            toot tooot!
+        =end somethingelse
+    =end something
+];
+$r = Pod6::parse($x);
+say $r.perl;
+isa_ok $r.content[0], Pod6::Block, "nested blocks work";
+is $r.content[0].content[0], "toot tooot!", "and their content";
+
+# Albi
+$x = q[
+=begin foo
+    and so,  all  of  the  villages chased
+    Albi,   The   Racist  Dragon, into the
+    very   cold   and  very  scary    cave
+
+    and it was so cold and so scary in
+    there,  that  Albi  began  to  cry
+
+    =begin bar
+        Dragon Tears!
+    =end bar
+
+    Which, as we all know...
+
+    =begin bar
+        Turn into Jelly Beans!
+    =end bar
+=end foo
+];
+
+$r = Pod6::parse($x);
+say $r.perl;
+isa_ok $r.content, Pod6::Block;
+is $r.content[0].content[0],
+   'and so, all of the villages chased Albi, The Racist Dragon, ' ~
+   'into the very cold and very scary cave';
+is $r.content[0].content[1],
+   'and it was so cold and so scary in there, that Albi began to cry';
+is $r.content[0].content[1].content[0], "Dragon Tears!";
+is $r.content[0].content[2], "Which, as we all know...";
+is $r.content[0].content[3], "Turn into Jelly Beans!";
