@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 16;
+plan 19;
 
 my $x = q[
 =begin foo
@@ -87,3 +87,17 @@ is $r.content[1],
 is $r.content[2].content[0], "Dragon Tears!";
 is $r.content[3], "Which, as we all know...";
 is $r.content[4].content[0], "Turn into Jelly Beans!";
+
+$x = q[
+=begin pod
+
+someone accidentally left a space
+ 
+between these two paragraphs
+
+=end pod
+];
+$r = Pod6::parse($x);
+isa_ok $r, Pod6::Block;
+is $r.content[0], 'someone accidentally left a space';
+is $r.content[1], 'between these two paragraphs';

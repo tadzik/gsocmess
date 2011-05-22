@@ -14,7 +14,7 @@ grammar Pod6::Grammar {
     # any number of paragraphs of text
     token pod_content:sym<text> {
         \n*
-        <pod_text_para> ** \n+
+        <pod_text_para> ** [\h* \n]+
         \n*
     }
 
