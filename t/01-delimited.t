@@ -81,12 +81,17 @@ isa_ok $r, Pod6::Block;
 is $r.content.elems, 5, '5 sub-nodes in foo';
 is $r.content[0],
    'and so, all of the villages chased Albi, The Racist Dragon, ' ~
-   'into the very cold and very scary cave';
+   'into the very cold and very scary cave',
+   '...in the marmelade forest';
 is $r.content[1],
-   'and it was so cold and so scary in there, that Albi began to cry';
-is $r.content[2].content[0], "Dragon Tears!";
-is $r.content[3], "Which, as we all know...";
-is $r.content[4].content[0], "Turn into Jelly Beans!";
+   'and it was so cold and so scary in there, that Albi began to cry',
+   '...between the make-believe trees';
+is $r.content[2].content[0], "Dragon Tears!",
+   '...in a cottage cheese cottage';
+is $r.content[3], "Which, as we all know...",
+   '...lives Albi! Albi!';
+is $r.content[4].content[0], "Turn into Jelly Beans!",
+   '...Albi, the Racist Dragon';
 
 $x = q[
 =begin pod
@@ -99,5 +104,7 @@ between these two paragraphs
 ];
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block;
-is $r.content[0], 'someone accidentally left a space';
-is $r.content[1], 'between these two paragraphs';
+is $r.content[0], 'someone accidentally left a space',
+   'accidental space, 1/2';
+is $r.content[1], 'between these two paragraphs',
+   'accidental space, 2/2';
