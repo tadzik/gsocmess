@@ -38,6 +38,11 @@ grammar Pod6::Grammar {
         ^^ \h* '=for' \h+ <ident> \h* \n
         $<pod_content> = <pod_text_para> *
     }
+
+    token pod_block:sym<abbreviated> {
+        ^^ \h* '=' <!before begin || end || for> <ident>
+        $<pod_content> = <pod_text_para> *
+    }
 }
 
 # vim: ft=perl6

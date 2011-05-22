@@ -64,6 +64,10 @@ class Pod6::Actions {
         make self.any_block($/);
     }
 
+    method pod_block:sym<abbreviated>($/) {
+        make self.any_block($/);
+    }
+
     method any_block($/) {
         my @content;
         for $<pod_content>».ast {
