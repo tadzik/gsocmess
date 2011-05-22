@@ -33,6 +33,11 @@ grammar Pod6::Grammar {
 #         ||  <.panic: '=begin without matching =end'>
         ]
     }
+
+    token pod_block:sym<paragraph> {
+        ^^ \h* '=for' \h+ <ident> \h* \n
+        $<pod_content> = <pod_text_para> *
+    }
 }
 
 # vim: ft=perl6

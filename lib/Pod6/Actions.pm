@@ -57,14 +57,20 @@ class Pod6::Actions {
     }
 
     method pod_block:sym<delimited>($/) {
-        my $block;
+        make self.any_block($/);
+    }
+
+    method pod_block:sym<paragraph>($/) {
+        make self.any_block($/);
+    }
+
+    method any_block($/) {
         my @content;
         for $<pod_content>».ast {
             @content.push: |$_
         }
         # XXX: Should be Pod::Block::Named::$type somehow
-        $block = Pod6::Block::Named.new(content => @content);
-        make $block;
+        return Pod6::Block::Named.new(content => @content);
     }
 }
 
