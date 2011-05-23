@@ -26,7 +26,7 @@ grammar Pod6::Grammar {
     proto token pod_block { <...> }
 
     token pod_block:sym<delimited> {
-        ^^ \h* '=begin' \h+ <ident> \h* \n
+        ^^ \h* '=begin' <!before 'END'> \h+ <ident> \h* \n+
         [
          <pod_content> *
          ^^ \h* '=end' \h+ $<ident> \h* \n
@@ -34,13 +34,23 @@ grammar Pod6::Grammar {
         ]
     }
 
+    token pod_block:sym<end> {
+        ^^ \h*
+        [
+            || '=begin' \h+ 'END' \h* \n
+            || '=for'   \h+ 'END' \h* \n
+            || '=END' \h+
+        ]
+        .*
+    }
+
     token pod_block:sym<paragraph> {
-        ^^ \h* '=for' \h+ <ident> \h* \n
+        ^^ \h* '=for' <!before 'END'> \h+ <ident> \h* \n
         $<pod_content> = <pod_text_para> *
     }
 
     token pod_block:sym<abbreviated> {
-        ^^ \h* '=' <!before begin || end || for> <ident>
+        ^^ \h* '=' <!before begin || end || for || END> <ident>
         $<pod_content> = <pod_text_para> *
     }
 }
