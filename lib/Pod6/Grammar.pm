@@ -20,7 +20,7 @@ grammar Pod6::Grammar {
 
     # a single paragraph of text
     token pod_text_para {
-        $<text> = [ \h* <![=]> \N+ \n ] +
+        $<text> = [ \h* <!before '=' \w> \N+ \n ] +
     }
 
     proto token pod_block { <...> }

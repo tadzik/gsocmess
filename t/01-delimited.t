@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 19;
+plan 21;
 
 my $x = q[
 =begin foo
@@ -108,3 +108,17 @@ is $r.content[0], 'someone accidentally left a space',
    'accidental space, 1/2';
 is $r.content[1], 'between these two paragraphs',
    'accidental space, 2/2';
+
+$x = q[
+=begin kwid
+
+= DESCRIPTION
+bla bla
+
+foo
+=end kwid
+];
+
+$r = Pod6::parse($x);
+is $r.content[0], '= DESCRIPTION bla bla';
+is $r.content[1], 'foo';
