@@ -26,10 +26,10 @@ grammar Pod6::Grammar {
     proto token pod_block { <...> }
 
     token pod_block:sym<delimited> {
-        ^^ \h* '=begin' <!before 'END'> \h+ <ident> \h* \n+
+        ^^ \h* '=begin' <!before 'END'> \h+ <identifier> \h* \n+
         [
          <pod_content> *
-         ^^ \h* '=end' \h+ $<ident> \h* \n
+         ^^ \h* '=end' \h+ $<identifier> \h* \n
 #         ||  <.panic: '=begin without matching =end'>
         ]
     }
@@ -45,13 +45,22 @@ grammar Pod6::Grammar {
     }
 
     token pod_block:sym<paragraph> {
-        ^^ \h* '=for' <!before 'END'> \h+ <ident> \h* \n
+        ^^ \h* '=for' <!before 'END'> \h+ <identifier> \h* \n
         $<pod_content> = <pod_text_para> *
     }
 
     token pod_block:sym<abbreviated> {
-        ^^ \h* '=' <!before begin || end || for || END> <ident>
+        ^^ \h* '=' <!before begin || end || for || END> <identifier>
         $<pod_content> = <pod_text_para> *
+    }
+
+# XXX From the Perl 6 grammar, do not copy to Rakudo
+    token apostrophe {
+        <[ ' \- ]>
+    }
+
+    token identifier {
+        <.ident> [ <.apostrophe> <.ident> ]*
     }
 }
 

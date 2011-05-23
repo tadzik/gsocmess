@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 21;
+plan 23;
 
 my $x = q[
 =begin foo
@@ -109,6 +109,7 @@ is $r.content[0], 'someone accidentally left a space',
 is $r.content[1], 'between these two paragraphs',
    'accidental space, 2/2';
 
+# various things which caused the spectest to fail at some point
 $x = q[
 =begin kwid
 
@@ -122,3 +123,27 @@ foo
 $r = Pod6::parse($x);
 is $r.content[0], '= DESCRIPTION bla bla';
 is $r.content[1], 'foo';
+
+$x = q[
+=begin pod
+
+Tests for the feed operators
+==> and <==
+
+=end pod
+];
+
+$r = Pod6::parse($x);
+is $r.content[0], 'Tests for the feed operators ==> and <==';
+
+$x = q[
+=begin more-discussion-needed
+
+XXX: chop(@array) should return an array of chopped strings?
+XXX: chop(%has)   should return a  hash  of chopped strings?
+
+=end more-discussion-needed
+];
+
+$r = Pod6::parse($x);
+isa_ok $r, Pod6::Block;
