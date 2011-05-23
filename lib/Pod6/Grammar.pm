@@ -13,9 +13,9 @@ grammar Pod6::Grammar {
 
     # any number of paragraphs of text
     token pod_content:sym<text> {
-        \n*
+        [\h* \n]*
         <pod_text_para> ** [\h* \n]+
-        \n*
+        [\h* \n]*
     }
 
     # a single paragraph of text
@@ -26,11 +26,11 @@ grammar Pod6::Grammar {
     proto token pod_block { <...> }
 
     token pod_block:sym<delimited> {
-        ^^ \h* '=begin' <!before 'END'> \h+ <identifier> \h* \n+
+        ^^ \h* '=begin' \h+ <!before 'END'> <identifier> \h* \n+
         [
          <pod_content> *
          ^^ \h* '=end' \h+ $<identifier> \h* \n
-#         ||  <.panic: '=begin without matching =end'>
+         ||  <.panic: '=begin without matching =end'>
         ]
     }
 
@@ -45,7 +45,7 @@ grammar Pod6::Grammar {
     }
 
     token pod_block:sym<paragraph> {
-        ^^ \h* '=for' <!before 'END'> \h+ <identifier> \h* \n
+        ^^ \h* '=for' \h+ <!before 'END'> <identifier> \h* \n
         $<pod_content> = <pod_text_para> *
     }
 

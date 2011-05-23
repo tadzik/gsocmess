@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 23;
+plan 24;
 
 my $x = q[
 =begin foo
@@ -128,13 +128,15 @@ $x = q[
 =begin pod
 
 Tests for the feed operators
-==> and <==
 
+    ==> and <==
+    
 =end pod
 ];
 
 $r = Pod6::parse($x);
-is $r.content[0], 'Tests for the feed operators ==> and <==';
+is $r.content[0], 'Tests for the feed operators';
+is $r.content[1], '==> and <==';
 
 $x = q[
 =begin more-discussion-needed
