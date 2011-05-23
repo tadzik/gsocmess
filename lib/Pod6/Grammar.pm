@@ -1,21 +1,23 @@
 grammar Pod6::Grammar {
     token TOP {
-        \n* <pod_content> \n*
+        <pod_newline>*
+        <pod_content>
+        <pod_newline>*
     }
 
     proto token pod_content { <...> }
 
     token pod_content:sym<block> {
-        \n*
+        <pod_newline>*
         <pod_block>
-        \n*
+        <pod_newline>*
     }
 
     # any number of paragraphs of text
     token pod_content:sym<text> {
-        [\h* \n]*
-        <pod_text_para> ** [\h* \n]+
-        [\h* \n]*
+        <pod_newline>*
+        <pod_text_para> ** <pod_newline>+
+        <pod_newline>*
     }
 
     # a single paragraph of text
@@ -26,10 +28,10 @@ grammar Pod6::Grammar {
     proto token pod_block { <...> }
 
     token pod_block:sym<delimited> {
-        ^^ \h* '=begin' \h+ <!before 'END'> <identifier> \h* \n+
+        ^^ \h* '=begin' \h+ <!before 'END'> <identifier> <pod_newline>+
         [
          <pod_content> *
-         ^^ \h* '=end' \h+ $<identifier> \h* \n
+         ^^ \h* '=end' \h+ $<identifier> <pod_newline>
          ||  <.panic: '=begin without matching =end'>
         ]
     }
@@ -37,21 +39,25 @@ grammar Pod6::Grammar {
     token pod_block:sym<end> {
         ^^ \h*
         [
-            || '=begin' \h+ 'END' \h* \n
-            || '=for'   \h+ 'END' \h* \n
+            || '=begin' \h+ 'END' <pod_newline>
+            || '=for'   \h+ 'END' <pod_newline>
             || '=END' \h+
         ]
         .*
     }
 
     token pod_block:sym<paragraph> {
-        ^^ \h* '=for' \h+ <!before 'END'> <identifier> \h* \n
+        ^^ \h* '=for' \h+ <!before 'END'> <identifier> <pod_newline>
         $<pod_content> = <pod_text_para> *
     }
 
     token pod_block:sym<abbreviated> {
         ^^ \h* '=' <!before begin || end || for || END> <identifier>
         $<pod_content> = <pod_text_para> *
+    }
+
+    token pod_newline {
+        \h* \n
     }
 
 # XXX From the Perl 6 grammar, do not copy to Rakudo
