@@ -36,6 +36,17 @@ grammar Pod6::Grammar {
         ]
     }
 
+    token pod_block:sym<delimited_raw> {
+        ^^ \h* '=begin' \h+ <!before 'END'>
+                        $<identifier>=[ 'code' | 'comment' ]
+                        <pod_newline>+
+        [
+         $<pod_content> = [ .*? ]
+         ^^ \h* '=end' \h+ $<identifier> <pod_newline>
+         ||  <.panic: '=begin without matching =end'>
+        ]
+    }
+
     token pod_block:sym<end> {
         ^^ \h*
         [
@@ -51,9 +62,23 @@ grammar Pod6::Grammar {
         $<pod_content> = <pod_text_para> *
     }
 
+    token pod_block:sym<paragraph_raw> {
+        ^^ \h* '=for' \h+ <!before 'END'>
+                          $<identifier>=[ 'code' | 'comment' ]
+                          <pod_newline>
+        $<pod_content> = [ \N+ <pod_newline> ] *
+    }
+
     token pod_block:sym<abbreviated> {
-        ^^ \h* '=' <!before begin || end || for || END> <identifier>
+        ^^ \h* '=' <!before begin || end || for || END>
+                   <identifier> <pod_newline>?
         $<pod_content> = <pod_text_para> *
+    }
+
+    token pod_block:sym<abbreviated_raw> {
+        ^^ \h* '=' $<identifier>=[ 'code' | 'comment' ]
+                   [ <pod_newline> | \h+ ]?
+        $<pod_content> = [ \N+ <pod_newline> ] *
     }
 
     token pod_newline {

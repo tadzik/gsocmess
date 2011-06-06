@@ -3,6 +3,8 @@ class Pod6::Block {
     has @.content;
 }
 
+class Pod6::Block::Comment is Pod6::Block { }
+
 class Pod6::Block::Para is Pod6::Block { }
 
 class Pod6::Block::Heading is Pod6::Block {
@@ -60,12 +62,24 @@ class Pod6::Actions {
         make self.any_block($/);
     }
 
+    method pod_block:sym<delimited_raw>($/) {
+        make self.raw_block($/);
+    }
+
     method pod_block:sym<paragraph>($/) {
         make self.any_block($/);
     }
 
+    method pod_block:sym<paragraph_raw>($/) {
+        make self.raw_block($/);
+    }
+
     method pod_block:sym<abbreviated>($/) {
         make self.any_block($/);
+    }
+
+    method pod_block:sym<abbreviated_raw>($/) {
+        make self.raw_block($/);
     }
 
     method any_block($/) {
@@ -75,6 +89,15 @@ class Pod6::Actions {
         }
         # XXX: Should be Pod::Block::Named::$type somehow
         return Pod6::Block::Named.new(content => @content);
+    }
+
+    method raw_block($/) {
+        my @content = ~$<pod_content>;
+        if $<identifier> eq 'code' {
+            return Pod6::Block::Code.new(content => @content);
+        } else {
+            return Pod6::Block::Comment.new(content => @content);
+        }
     }
 }
 

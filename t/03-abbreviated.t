@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 23;
+plan 26;
 
 my $x = q[
 =foo
@@ -108,3 +108,18 @@ is $r.content[3], "Which, as we all know...",
    '...lives Albi! Albi!';
 is $r.content[4].content[0], "Turn into Jelly Beans!",
    '...Albi, the Racist Dragon';
+
+# from S26
+$x = q[
+     =table_not
+         Constants 1
+         Variables 10
+         Subroutines 33
+         Everything else 57
+];
+
+$r = Pod6::parse($x);
+isa_ok $r, Pod6::Block;
+is $r.content.elems, 1;
+is $r.content[0],
+   'Constants 1 Variables 10 Subroutines 33 Everything else 57';
