@@ -30,13 +30,10 @@ class Pod6::FormattingCode::C is Pod6::FormattingCode { }
 
 class Pod6::FormattingCode::K is Pod6::FormattingCode { }
 
-class Pod6::List {
-    # this is not a block. In Damian Conway's implementation it is,
-    # but at this very moment I don't see much connection. Maybe
-    # rereading the spec or implementing things later on will open
-    # my eyes
-    has $.numbered;
-    has @.elements; # one of those may be a Pod6::List as well
+class Pod6::Item is Pod6::Block {
+    # a list item. There should be no List block
+    # or any other Item container
+    has $.level;
 }
 
 class Pod6::Actions {
@@ -85,7 +82,10 @@ class Pod6::Actions {
     method any_block($/) {
         my @content;
         for $<pod_content>».ast {
-            @content.push: |$_
+            @content.push: @($_);
+        }
+        if $<identifier> ~~ /^item [\d+]?/ {
+            return self.list_item($/, @content);
         }
         # XXX: Should be Pod::Block::Named::$type somehow
         return Pod6::Block::Named.new(content => @content);
@@ -98,6 +98,13 @@ class Pod6::Actions {
         } else {
             return Pod6::Block::Comment.new(content => @content);
         }
+    }
+
+    method list_item($/, @content) {
+        return Pod6::Item.new(
+            level   => $<identifier>.substr(4),
+            content => @content,
+        );
     }
 }
 
