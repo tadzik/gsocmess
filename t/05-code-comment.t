@@ -20,9 +20,7 @@ is $r.content[0], "foo foo\n=begin invalid pod\n"
 $x = q[
 =for comment
 foo foo
-=begin invalid pod
-=as many invalid pod as we want
-===yay!
+bla bla    bla
 
 This isn't a comment
 ];
@@ -30,14 +28,11 @@ This isn't a comment
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block::Comment;
 is $r.content.elems, 1;
-is $r.content[0], "foo foo\n=begin invalid pod\n"
-                ~ "=as many invalid pod as we want\n===yay!\n";
+is $r.content[0], "foo foo\nbla bla    bla\n";
 
 $x = q[
 =comment foo foo
-=begin invalid pod
-=as many invalid pod as we want
-===yay!
+bla bla    bla
 
 This isn't a comment
 ];
@@ -45,15 +40,12 @@ This isn't a comment
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block::Comment;
 is $r.content.elems, 1;
-is $r.content[0], "foo foo\n=begin invalid pod\n"
-                ~ "=as many invalid pod as we want\n===yay!\n";
+is $r.content[0], "foo foo\nbla bla    bla\n";
 
 # just checking if Code works too
 $x = q[
 =code foo foo
-=begin invalid pod
-=as many invalid pod as we want
-===yay!
+bla bla    bla
 
 This isn't a comment
 ];
@@ -61,8 +53,7 @@ This isn't a comment
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block::Code;
 is $r.content.elems, 1;
-is $r.content[0], "foo foo\n=begin invalid pod\n"
-                ~ "=as many invalid pod as we want\n===yay!\n";
+is $r.content[0], "foo foo\nbla bla    bla\n";
 
 # from S26
 $x = q[

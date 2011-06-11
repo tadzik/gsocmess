@@ -22,7 +22,7 @@ grammar Pod6::Grammar {
 
     # a single paragraph of text
     token pod_text_para {
-        $<text> = [ \h* <!before '=' \w> \N+ \n ] +
+        $<text> = [ \h* <!before '=' \w> \N+ <pod_newline> ] +
     }
 
     proto token pod_block { <...> }
@@ -66,7 +66,7 @@ grammar Pod6::Grammar {
         ^^ \h* '=for' \h+ <!before 'END'>
                           $<identifier>=[ 'code' | 'comment' ]
                           <pod_newline>
-        $<pod_content> = [ \N+ <pod_newline> ] *
+        $<pod_content> = <pod_text_para> *
     }
 
     token pod_block:sym<abbreviated> {
@@ -78,7 +78,7 @@ grammar Pod6::Grammar {
     token pod_block:sym<abbreviated_raw> {
         ^^ \h* '=' $<identifier>=[ 'code' | 'comment' ]
                    [ <pod_newline> | \h+ ]?
-        $<pod_content> = [ \N+ <pod_newline> ] *
+        $<pod_content> = <pod_text_para> *
     }
 
     token pod_newline {
@@ -92,6 +92,10 @@ grammar Pod6::Grammar {
 
     token identifier {
         <.ident> [ <.apostrophe> <.ident> ]*
+    }
+
+    method panic($a) {
+        die $a
     }
 }
 
