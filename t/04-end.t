@@ -1,7 +1,7 @@
 use Test;
 use Pod6;
 
-plan 5;
+plan 7;
 
 my $x = q[
 =foo bar
@@ -30,9 +30,8 @@ ble ble!
 ];
 
 $r = Pod6::parse($x);
-say $r.perl;
-#isa_ok $r, Pod6::Block;
-#is $r.content, [];
+isa_ok $r, Pod6::Block;
+is $r.content, [];
 
 $x = q[
 =what ever
