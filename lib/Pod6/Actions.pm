@@ -84,7 +84,7 @@ class Pod6::Actions {
         for $<pod_content>».ast {
             @content.push: @($_);
         }
-        if $<identifier> ~~ /^item [\d+]?/ {
+        if $<identifier>.Str ~~ /^item \d*/ {
             return self.list_item($/, @content);
         }
         # XXX: Should be Pod::Block::Named::$type somehow
