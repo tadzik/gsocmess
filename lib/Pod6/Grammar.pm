@@ -45,7 +45,6 @@ grammar Pod6::Grammar {
         $<text> = [
             [<!before '=' \w> \N+] ** [<pod_newline> $<spaces>]
         ]
-        { say "code block has ended" }
     }
 
     proto token pod_block { <...> }
