@@ -1,5 +1,6 @@
 grammar Pod6::Grammar {
     token TOP {
+        :my $*VMARGIN := -1;
         <pod_newline>*
         <pod_content>
         <pod_newline>*
@@ -16,19 +17,45 @@ grammar Pod6::Grammar {
     # any number of paragraphs of text
     token pod_content:sym<text> {
         <pod_newline>*
-        <pod_text_para> ** <pod_newline>+
+        <pod_textcontent> ** <pod_newline>+
         <pod_newline>*
     }
 
+    proto token pod_textcontent { <...> }
+
     # a single paragraph of text
     token pod_text_para {
-        $<text> = [ \h* <!before '=' \w> \N+ <pod_newline> ] +
+        $<text> = [
+            \h* <!before '=' \w> \N+ <pod_newline>
+        ] +
+    }
+
+    # text not being code
+    token pod_textcontent:sym<regular> {
+        $<spaces>=[ \h* ]
+        <?{ $*VMARGIN >= 0 ?? ~$<spaces> eq $*VMARGIN !! 1 }>
+        $<text> = [
+            \h* <!before '=' \w> \N+ <pod_newline>
+        ] +
+    }
+
+    token pod_textcontent:sym<code> {
+        $<spaces>=[ \h* ]
+        <?{ $*VMARGIN >= 0 ?? ~$<spaces> ne $*VMARGIN !! 1 }>
+        $<text> = [
+            [<!before '=' \w> \N+] ** [<pod_newline> $<spaces>]
+        ]
+        { say "code block has ended" }
     }
 
     proto token pod_block { <...> }
 
     token pod_block:sym<delimited> {
-        ^^ \h* '=begin' \h+ <!before 'END'> <identifier> <pod_newline>+
+        ^^
+        $<spaces> = [ \h* ]
+        {}
+        :my $*VMARGIN := ~$<spaces>;
+        '=begin' \h+ <!before 'END'> <identifier> <pod_newline>+
         [
          <pod_content> *
          ^^ \h* '=end' \h+ $<identifier> <pod_newline>

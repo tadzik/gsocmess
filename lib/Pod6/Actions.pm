@@ -48,11 +48,21 @@ class Pod6::Actions {
     }
 
     method pod_content:sym<text>($/) {
-        make $<pod_text_para>».ast.values;
+        make $<pod_textcontent>».ast.values;
     }
 
     method pod_text_para($/) {
-        make $<text>.Str.subst(/\s+/, ' ', :g).subst(/^^\s*/, '').subst(/\s*$$/, '');
+        make self.formatted_text($<text>.Str);
+    }
+
+    method pod_textcontent:sym<regular>($/) {
+        make self.formatted_text($<text>.Str);
+    }
+
+    method pod_textcontent:sym<code>($/) {
+        my $s := $<spaces>.Str;
+        my $t := $<text>.Str.subst("\n$s", "\n", :g).chomp;
+        make Pod6::Block::Code.new(content => $t);
     }
 
     method pod_block:sym<delimited>($/) {
@@ -99,13 +109,15 @@ class Pod6::Actions {
             return Pod6::Block::Comment.new(content => @content);
         }
     }
-
     method list_item($/, @content) {
         return Pod6::Item.new(
             level   => $<identifier>.substr(4),
             content => @content,
         );
     }
-}
 
+    method formatted_text($a) {
+        $a.subst(/\s+/, ' ', :g).subst(/^^\s*/, '').subst(/\s*$$/, '');
+    }
+}
 # vim: ft=perl6

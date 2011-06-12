@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 24;
+plan 22;
 
 my $x = q[
 =begin foo
@@ -28,7 +28,7 @@ spaced   text
 ];
 $r = Pod6::parse($x);
 is $r.content[0], "some spaced text", 'additional whitespace removed ' ~
-                                   'from the content';
+                                      'from the content';
 
 $x = q[
 =begin foo
@@ -123,20 +123,6 @@ foo
 $r = Pod6::parse($x);
 is $r.content[0], '= DESCRIPTION bla bla';
 is $r.content[1], 'foo';
-
-$x = q[
-=begin pod
-
-Tests for the feed operators
-
-    ==> and <==
-    
-=end pod
-];
-
-$r = Pod6::parse($x);
-is $r.content[0], 'Tests for the feed operators';
-is $r.content[1], '==> and <==';
 
 $x = q[
 =begin more-discussion-needed
