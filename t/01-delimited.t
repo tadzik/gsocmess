@@ -46,7 +46,7 @@ is $r.content[1], "paragraph two", 'paragraphs ok, 2/2';
 $x = q[
     =begin something
         =begin somethingelse
-            toot tooot!
+        toot tooot!
         =end somethingelse
     =end something
 ];
@@ -57,21 +57,21 @@ is $r.content[0].content[0], "toot tooot!", "and their content";
 # Albi
 $x = q[
 =begin foo
-    and so,  all  of  the  villages chased
-    Albi,   The   Racist  Dragon, into the
-    very   cold   and  very  scary    cave
+and so,  all  of  the  villages chased
+Albi,   The   Racist  Dragon, into the
+very   cold   and  very  scary    cave
 
-    and it was so cold and so scary in
-    there,  that  Albi  began  to  cry
+and it was so cold and so scary in
+there,  that  Albi  began  to  cry
 
     =begin bar
-        Dragon Tears!
+    Dragon Tears!
     =end bar
 
-    Which, as we all know...
+Which, as we all know...
 
     =begin bar
-        Turn into Jelly Beans!
+    Turn into Jelly Beans!
     =end bar
 =end foo
 ];

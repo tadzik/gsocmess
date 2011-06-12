@@ -50,18 +50,18 @@ is $r.content[2], "Outside blocks",
 # mixed blocks
 $x = q[
 =begin pod
-=begin one
-one, delimited block
-=end one
-=two two,
-paragraph block
-=for three
-three, still a parablock
+    =begin one
+    one, delimited block
+    =end one
+    =two two,
+    paragraph block
+    =for three
+    three, still a parablock
 
-=begin four
-four, another delimited one
-=end four
-=head1 And just for the sake of having a working =head1 :)
+    =begin four
+    four, another delimited one
+    =end four
+    =head1 And just for the sake of having a working =head1 :)
 =end pod
 ];
 
@@ -74,16 +74,16 @@ is $r.content[4].content[0], "And just for the sake of having a working =head1 :
 
 $x = q[
 =begin foo
-    and so,  all  of  the  villages chased
-    Albi,   The   Racist  Dragon, into the
-    very   cold   and  very  scary    cave
+and so,  all  of  the  villages chased
+Albi,   The   Racist  Dragon, into the
+very   cold   and  very  scary    cave
 
-    and it was so cold and so scary in
-    there,  that  Albi  began  to  cry
+and it was so cold and so scary in
+there,  that  Albi  began  to  cry
 
     =bold Dragon Tears!
 
-    Which, as we all know...
+Which, as we all know...
 
     =bold Turn
           into

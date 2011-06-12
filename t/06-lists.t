@@ -2,23 +2,21 @@ use Test;
 use Pod6;
 plan 31;
 
-my ($x, $r);
+my $x = q[
+    =begin pod
+    The seven suspects are:
 
-$x = q[
-=begin pod
-     The seven suspects are:
-
-     =item  Happy
-     =item  Dopey
-     =item  Sleepy
-     =item  Bashful
-     =item  Sneezy
-     =item  Grumpy
-     =item  Keyser Soze
-=end pod
+    =item  Happy
+    =item  Dopey
+    =item  Sleepy
+    =item  Bashful
+    =item  Sneezy
+    =item  Grumpy
+    =item  Keyser Soze
+    =end pod
 ];
 
-$r = Pod6::parse($x);
+my $r = Pod6::parse($x);
 is $r.content.elems, 8;
 for 1..7 {
     isa_ok $r.content[$_], Pod6::Item;
@@ -30,17 +28,17 @@ is $r.content[7].content, 'Keyser Soze';
 nok $r.content[4].level.defined, 'no level information';
 
 $x = q[
-=begin pod
-     =item1  Animal
-     =item2     Vertebrate
-     =item2     Invertebrate
+    =begin pod
+    =item1  Animal
+    =item2     Vertebrate
+    =item2     Invertebrate
 
-     =item1  Phase
-     =item2     Solid
-     =item2     Liquid
-     =item2     Gas
-     =item2     Chocolate
-=end pod
+    =item1  Phase
+    =item2     Solid
+    =item2     Liquid
+    =item2     Gas
+    =item2     Chocolate
+    =end pod
 ];
 
 $r = Pod6::parse($x);
@@ -59,7 +57,7 @@ $r.content[4].content, 'Solid';
 $r.content[4].level,   2;
 
 $x = q[
-=begin pod
+    =begin pod
     =comment CORRECT...
     =begin item1
     The choices are:
@@ -67,7 +65,7 @@ $x = q[
     =item2 Liberty
     =item2 Death
     =item2 Beer
-=end pod
+    =end pod
 ];
 $r = Pod6::parse($x);
 is $r.content.elems, 5;
@@ -81,31 +79,33 @@ for 1..4 {
 # it later.
 
 $x = q[
-=begin pod
-     Let's consider two common proverbs:
+    =begin pod
+    Let's consider two common proverbs:
 
-     =begin item
-     I<The rain in Spain falls mainly on the plain.>
+    =begin item
+    I<The rain in Spain falls mainly on the plain.>
 
-     This is a common myth and an unconscionable slur on the Spanish
-     people, the majority of whom are extremely attractive.
-     =end item
+    This is a common myth and an unconscionable slur on the Spanish
+    people, the majority of whom are extremely attractive.
+    =end item
 
-     =begin item
-     I<The early bird gets the worm.>
+    =begin item
+    I<The early bird gets the worm.>
 
-     In deciding whether to become an early riser, it is worth
-     considering whether you would actually enjoy annelids
-     for breakfast.
-     =end item
+    In deciding whether to become an early riser, it is worth
+    considering whether you would actually enjoy annelids
+    for breakfast.
+    =end item
 
-     As you can see, folk wisdom is often of dubious value.
-=end pod
+    As you can see, folk wisdom is often of dubious value.
+    =end pod
 ];
 
 $r = Pod6::parse($x);
 is $r.content.elems, 4;
 is $r.content[0], "Let's consider two common proverbs:";
-ok $r.content[1].content ~~ /:s This is a common .+ are extremely attractive/;
-ok $r.content[2].content ~~ /:s In deciding .+ annelids for breakfast/;
+ok $r.content[1].content.Str
+   ~~ /:s This is a common .+ are extremely attractive/;
+ok $r.content[2].content.Str
+   ~~ /:s In deciding .+ annelids for breakfast/;
 is $r.content[3], "As you can see, folk wisdom is often of dubious value.";

@@ -32,8 +32,8 @@ $x = q[
 =for got
 Inside got
 
-=for bidden
-Inside bidden
+    =for bidden
+    Inside bidden
 
 Outside blocks
 =end pod
@@ -77,20 +77,20 @@ is $r.content[3].content[0], "four, another delimited one", "mixed blocks, 4";
 # either
 $x = q[
 =begin foo
-    and so,  all  of  the  villages chased
-    Albi,   The   Racist  Dragon, into the
-    very   cold   and  very  scary    cave
+and so,  all  of  the  villages chased
+Albi,   The   Racist  Dragon, into the
+very   cold   and  very  scary    cave
 
-    and it was so cold and so scary in
-    there,  that  Albi  began  to  cry
-
-    =for bar
-        Dragon Tears!
-
-    Which, as we all know...
+and it was so cold and so scary in
+there,  that  Albi  began  to  cry
 
     =for bar
-        Turn into Jelly Beans!
+    Dragon Tears!
+
+Which, as we all know...
+
+    =for bar
+    Turn into Jelly Beans!
 =end foo
 ];
 
