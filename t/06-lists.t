@@ -1,5 +1,6 @@
 use Test;
 use Pod6;
+plan 31;
 
 my ($x, $r);
 
@@ -26,7 +27,6 @@ for 1..7 {
 is $r.content[1].content, 'Happy', 'content is happy :)';
 is $r.content[2].content, 'Dopey';
 is $r.content[7].content, 'Keyser Soze';
-todo 'damned Junctions';
 nok $r.content[4].level.defined, 'no level information';
 
 $x = q[
@@ -109,5 +109,3 @@ is $r.content[0], "Let's consider two common proverbs:";
 ok $r.content[1].content ~~ /:s This is a common .+ are extremely attractive/;
 ok $r.content[2].content ~~ /:s In deciding .+ annelids for breakfast/;
 is $r.content[3], "As you can see, folk wisdom is often of dubious value.";
-
-done;
