@@ -180,13 +180,11 @@ $x = q[
   still not a code
 
       a code
-
  and not a code
     =end pod
 ];
 
 $r = Pod6::parse($x);
-say $r.perl;
 is $r.content.elems, 3;
 is $r.content[0], 'not a code still not a code';
 isa_ok $r.content[1], Pod6::Block::Code;
