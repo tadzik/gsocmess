@@ -1,6 +1,6 @@
 grammar Pod6::Grammar {
     token TOP {
-        :my $*VMARGIN := -1;
+        :my $*VMARGIN := 0;
         <pod_newline>*
         <pod_content>
         <pod_newline>*
@@ -33,7 +33,7 @@ grammar Pod6::Grammar {
     # text not being code
     token pod_textcontent:sym<regular> {
         $<spaces>=[ \h* ]
-        <?{ $*VMARGIN >= 0 ?? ~$<spaces> eq $*VMARGIN !! 1 }>
+        <?{ ($<spaces>.to - $<spaces>.from) <= $*VMARGIN }>
         $<text> = [
             \h* <!before '=' \w> \N+ <pod_newline>
         ] +
@@ -41,7 +41,7 @@ grammar Pod6::Grammar {
 
     token pod_textcontent:sym<code> {
         $<spaces>=[ \h* ]
-        <?{ $*VMARGIN >= 0 ?? ~$<spaces> ne $*VMARGIN !! 1 }>
+        <?{ ($<spaces>.to - $<spaces>.from) > $*VMARGIN }>
         $<text> = [
             [<!before '=' \w> \N+] ** [<pod_newline> $<spaces>]
         ]
@@ -53,7 +53,7 @@ grammar Pod6::Grammar {
         ^^
         $<spaces> = [ \h* ]
         {}
-        :my $*VMARGIN := ~$<spaces>;
+        :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
         '=begin' \h+ <!before 'END'> <identifier> <pod_newline>+
         [
          <pod_content> *
