@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 49;
+plan 53;
 
 my $x = q[
 =begin comment
@@ -190,3 +190,14 @@ is $r.content[0], 'not a code still not a code';
 isa_ok $r.content[1], Pod6::Block::Code;
 is $r.content[1].content, 'a code';
 is $r.content[2], 'and not a code';
+
+$x = q[
+    =for bar
+        baz
+];
+
+$r = Pod6::parse($x);
+is $r.name, 'bar';
+is $r.content.elems, 1;
+isa_ok $r.content[0], Pod6::Block::Code;
+is $r.content[0].content, 'baz';

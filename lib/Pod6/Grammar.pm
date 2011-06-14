@@ -84,26 +84,33 @@ grammar Pod6::Grammar {
     }
 
     token pod_block:sym<paragraph> {
-        ^^ \h* '=for' \h+ <!before 'END'> <identifier> <pod_newline>
-        $<pod_content> = <pod_text_para> *
+        ^^
+        $<spaces> = [ \h* ]
+        {}
+        :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
+        '=for' \h+ <!before 'END'> <identifier> <pod_newline>
+        $<pod_content> = <pod_textcontent>?
     }
 
     token pod_block:sym<paragraph_raw> {
         ^^ \h* '=for' \h+ <!before 'END'>
                           $<identifier>=[ 'code' || 'comment' ]
                           <pod_newline>
-        $<pod_content> = <pod_text_para> *
+        $<pod_content> = <pod_text_para>
     }
 
     token pod_block:sym<abbreviated> {
-        ^^ \h* '=' <!before begin || end || for || END>
-                   <identifier> <pod_newline>?
-        $<pod_content> = <pod_text_para> *
+        ^^
+        $<spaces> = [ \h* ]
+        {}
+        :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
+        '=' <!before begin || end || for || END>
+                   <identifier> \s
+        $<pod_content> = <pod_textcontent>?
     }
 
     token pod_block:sym<abbreviated_raw> {
-        ^^ \h* '=' $<identifier>=[ 'code' || 'comment' ]
-                   [ <pod_newline> || \h+ ]?
+        ^^ \h* '=' $<identifier>=[ 'code' || 'comment' ] \s
         $<pod_content> = <pod_text_para> *
     }
 
