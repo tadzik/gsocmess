@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 22;
+plan 28;
 
 my $x = q[
 =begin foo
@@ -10,6 +10,7 @@ my $r = Pod6::parse($x);
 
 isa_ok $r, Pod6::Block, 'returns a Pod6 Block';
 isa_ok $r, Pod6::Block::Named, 'returns a named Block';
+is $r.name, 'foo', 'name is ok';
 is $r.content, [], 'no content, all right';
 
 $x = q[
@@ -19,6 +20,7 @@ some text
 ];
 $r = Pod6::parse($x);
 is $r.content[0], "some text", 'the content is all right';
+is $r.name, 'foo', 'name is ok';
 
 $x = q[
 =begin foo
@@ -27,6 +29,7 @@ spaced   text
 =end foo
 ];
 $r = Pod6::parse($x);
+is $r.name, 'foo', 'name is ok';
 is $r.content[0], "some spaced text", 'additional whitespace removed ' ~
                                       'from the content';
 
@@ -39,6 +42,7 @@ two
 =end foo
 ];
 $r = Pod6::parse($x);
+is $r.name, 'foo', 'name is ok';
 is $r.content[0], "paragraph one", 'paragraphs ok, 1/2';
 is $r.content[1], "paragraph two", 'paragraphs ok, 2/2';
 
@@ -51,8 +55,10 @@ $x = q[
     =end something
 ];
 $r = Pod6::parse($x);
+is $r.name, 'something', 'parent name ok';
 isa_ok $r.content[0], Pod6::Block, "nested blocks work";
 is $r.content[0].content[0], "toot tooot!", "and their content";
+is $r.content[0].name, 'somethingelse', 'child name ok';
 
 # Albi
 $x = q[

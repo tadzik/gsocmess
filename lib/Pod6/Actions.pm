@@ -15,7 +15,9 @@ class Pod6::Block::Code is Pod6::Block {
     has @.allowed;
 }
 
-class Pod6::Block::Named is Pod6::Block { }
+class Pod6::Block::Named is Pod6::Block {
+    has $.name;
+}
 
 class Pod6::Block::Table is Pod6::Block {
     has $.caption;
@@ -90,6 +92,7 @@ class Pod6::Actions {
     }
 
     method any_block($/) {
+        my $name := $<identifier>.Str;
         my @content;
         for $<pod_content>».ast {
             @content.push: @($_);
@@ -98,7 +101,10 @@ class Pod6::Actions {
             return self.list_item($/, @content);
         }
         # XXX: Should be Pod::Block::Named::$type somehow
-        return Pod6::Block::Named.new(content => @content);
+        return Pod6::Block::Named.new(
+            name    => $name,
+            content => @content,
+        );
     }
 
     method raw_block($/) {

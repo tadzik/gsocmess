@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 22;
+plan 26;
 
 my $x = q[
 =for foo
@@ -9,6 +9,7 @@ my $r = Pod6::parse($x);
 
 isa_ok $r, Pod6::Block, 'returns a Pod6 Block';
 isa_ok $r, Pod6::Block::Named, 'returns a named Block';
+is $r.name, 'foo', 'name is ok';
 is $r.content, [], 'no content, all right';
 
 $x = q[
@@ -97,6 +98,7 @@ Which, as we all know...
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block;
 is $r.content.elems, 5, '5 sub-nodes in foo';
+is $r.name, 'foo';
 is $r.content[0],
    'and so, all of the villages chased Albi, The Racist Dragon, ' ~
    'into the very cold and very scary cave',
@@ -104,9 +106,11 @@ is $r.content[0],
 is $r.content[1],
    'and it was so cold and so scary in there, that Albi began to cry',
    '...between the make-believe trees';
+is $r.content[2].name, 'bar';
 is $r.content[2].content[0], "Dragon Tears!",
    '...in a cottage cheese cottage';
 is $r.content[3], "Which, as we all know...",
    '...lives Albi! Albi!';
+is $r.content[4].name, 'bar';
 is $r.content[4].content[0], "Turn into Jelly Beans!",
    '...Albi, the Racist Dragon';
