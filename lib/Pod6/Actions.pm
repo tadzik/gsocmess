@@ -92,12 +92,12 @@ class Pod6::Actions {
     }
 
     method any_block($/) {
-        my $name := $<identifier>.Str;
+        my $name := $<type>.Str;
         my @content;
         for $<pod_content>».ast {
             @content.push: @($_);
         }
-        if $<identifier>.Str ~~ /^item \d*/ {
+        if $name ~~ /^item \d*$/ {
             return self.list_item($/, @content);
         }
         # XXX: Should be Pod::Block::Named::$type somehow
@@ -109,7 +109,7 @@ class Pod6::Actions {
 
     method raw_block($/) {
         my @content = ~$<pod_content>;
-        if $<identifier> eq 'code' {
+        if $<type> eq 'code' {
             return Pod6::Block::Code.new(content => @content);
         } else {
             return Pod6::Block::Comment.new(content => @content);
@@ -117,7 +117,7 @@ class Pod6::Actions {
     }
     method list_item($/, @content) {
         return Pod6::Item.new(
-            level   => $<identifier>.substr(4),
+            level   => $<type>.substr(4),
             content => @content,
         );
     }

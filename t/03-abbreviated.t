@@ -121,8 +121,5 @@ $x = q[
 $r = Pod6::parse($x);
 isa_ok $r, Pod6::Block;
 is $r.content.elems, 1;
-todo 'this currently gets parsed as a code block '
-    ~' due to lack of checking what kind of parent block we\'re in';
-    
 is $r.content[0],
    'Constants 1 Variables 10 Subroutines 33 Everything else 57';

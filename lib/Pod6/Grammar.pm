@@ -1,6 +1,7 @@
 grammar Pod6::Grammar {
     token TOP {
-        :my $*VMARGIN := 0;
+        :my $*VMARGIN    := 0;
+        :my $*ALLOW_CODE := 0;
         <pod_newline>*
         <pod_content>
         <pod_newline>*
@@ -33,7 +34,8 @@ grammar Pod6::Grammar {
     # text not being code
     token pod_textcontent:sym<regular> {
         $<spaces>=[ \h* ]
-        <?{ ($<spaces>.to - $<spaces>.from) <= $*VMARGIN }>
+        <?{ !$*ALLOW_CODE
+            or ($<spaces>.to - $<spaces>.from) <= $*VMARGIN }>
         $<text> = [
             \h* <!before '=' \w> \N+ <pod_newline>
         ] +
@@ -41,7 +43,8 @@ grammar Pod6::Grammar {
 
     token pod_textcontent:sym<code> {
         $<spaces>=[ \h* ]
-        <?{ ($<spaces>.to - $<spaces>.from) > $*VMARGIN }>
+        <?{ $*ALLOW_CODE
+            and ($<spaces>.to - $<spaces>.from) > $*VMARGIN }>
         $<text> = [
             [<!before '=' \w> \N+] ** [<pod_newline> $<spaces>]
         ]
@@ -52,23 +55,29 @@ grammar Pod6::Grammar {
     token pod_block:sym<delimited> {
         ^^
         $<spaces> = [ \h* ]
+        '=begin' \h+ <!before 'END'>
         {}
         :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
-        '=begin' \h+ <!before 'END'> <identifier> <pod_newline>+
+        :my $*ALLOW_CODE := 0;
+        $<type> = [
+            <pod_code_parent> { $*ALLOW_CODE := 1 }
+            || <identifier>
+        ]
+        <pod_newline>+
         [
          <pod_content> *
-         ^^ \h* '=end' \h+ $<identifier> <pod_newline>
+         ^^ \h* '=end' \h+ $<type> <pod_newline>
          ||  <.panic: '=begin without matching =end'>
         ]
     }
 
     token pod_block:sym<delimited_raw> {
         ^^ \h* '=begin' \h+ <!before 'END'>
-                        $<identifier>=[ 'code' || 'comment' ]
+                        $<type>=[ 'code' || 'comment' ]
                         <pod_newline>+
         [
          $<pod_content> = [ .*? ]
-         ^^ \h* '=end' \h+ $<identifier> <pod_newline>
+         ^^ \h* '=end' \h+ $<type> <pod_newline>
          ||  <.panic: '=begin without matching =end'>
         ]
     }
@@ -88,13 +97,20 @@ grammar Pod6::Grammar {
         $<spaces> = [ \h* ]
         {}
         :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
-        '=for' \h+ <!before 'END'> <identifier> <pod_newline>
+        :my $*ALLOW_CODE := 0;
+        '=for' \h+ <!before 'END'>
+        $<type> = [
+            <pod_code_parent> { $*ALLOW_CODE := 1 }
+            || <identifier>
+        ]
+
+        <pod_newline>
         $<pod_content> = <pod_textcontent>?
     }
 
     token pod_block:sym<paragraph_raw> {
         ^^ \h* '=for' \h+ <!before 'END'>
-                          $<identifier>=[ 'code' || 'comment' ]
+                          $<type>=[ 'code' || 'comment' ]
                           <pod_newline>
         $<pod_content> = <pod_text_para>
     }
@@ -104,18 +120,28 @@ grammar Pod6::Grammar {
         $<spaces> = [ \h* ]
         {}
         :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
+        :my $*ALLOW_CODE := 0;
         '=' <!before begin || end || for || END>
-                   <identifier> \s
+        $<type> = [
+            <pod_code_parent> { $*ALLOW_CODE := 1 }
+            || <identifier>
+        ]
+        \s
         $<pod_content> = <pod_textcontent>?
     }
 
     token pod_block:sym<abbreviated_raw> {
-        ^^ \h* '=' $<identifier>=[ 'code' || 'comment' ] \s
+        ^^ \h* '=' $<type>=[ 'code' || 'comment' ] \s
         $<pod_content> = <pod_text_para> *
     }
 
     token pod_newline {
         \h* \n
+    }
+
+    token pod_code_parent {
+        'pod' <!before \w> || 'item' \d* <!before \w>
+        # TODO: Also Semantic blocks one day
     }
 
 # XXX From the Perl 6 grammar, do not copy to Rakudo

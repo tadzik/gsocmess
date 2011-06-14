@@ -1,6 +1,6 @@
 use Test;
 use Pod6;
-plan 53;
+plan 65;
 
 my $x = q[
 =begin comment
@@ -44,16 +44,18 @@ is $r.content[0], "foo foo\nbla bla    bla\n";
 
 # just checking if Code works too
 $x = q[
+=begin pod
 =code foo foo
 bla bla    bla
 
 This isn't a comment
+=end pod
 ];
 
 $r = Pod6::parse($x);
-isa_ok $r, Pod6::Block::Code;
-is $r.content.elems, 1;
-is $r.content[0], "foo foo\nbla bla    bla\n";
+isa_ok $r.content[0], Pod6::Block::Code;
+is $r.content[0].elems, 1;
+is $r.content[0].content, "foo foo\nbla bla    bla\n";
 
 # from S26
 $x = q[
@@ -192,12 +194,46 @@ is $r.content[1].content, 'a code';
 is $r.content[2], 'and not a code';
 
 $x = q[
-    =for bar
-        baz
+=begin pod
+    this is code
+
+    =for podcast
+        this is not
+
+    this is code
+
+    =begin itemization
+        this is not
+    =end itemization
+
+    =begin quitem
+        and this is not
+    =end quitem
+
+    =item
+        and this is!
+=end pod
 ];
 
 $r = Pod6::parse($x);
-is $r.name, 'bar';
-is $r.content.elems, 1;
+is $r.content.elems, 6;
 isa_ok $r.content[0], Pod6::Block::Code;
-is $r.content[0].content, 'baz';
+is $r.content[0].content, 'this is code';
+
+isa_ok $r.content[1], Pod6::Block::Named;
+is $r.content[1].name, 'podcast';
+is $r.content[1].content, 'this is not';
+
+isa_ok $r.content[2], Pod6::Block::Code;
+is $r.content[2].content, 'this is code';
+
+isa_ok $r.content[3], Pod6::Block::Named;
+is $r.content[3].name, 'itemization';
+is $r.content[3].content, 'this is not';
+
+isa_ok $r.content[4], Pod6::Block::Named;
+is $r.content[4].name, 'quitem';
+is $r.content[4].content, 'and this is not';
+
+isa_ok $r.content[5].content[0], Pod6::Block::Code;
+is $r.content[5].content[0].content, 'and this is!';
