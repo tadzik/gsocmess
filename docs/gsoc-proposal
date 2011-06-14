@@ -1,0 +1,131 @@
+Pod parser for Rakudo
+
+1 Abstract
+
+Write a Perl 6 Pod parser for Rakudo, being capable of generating the documentation from the Perl 6 code as well as accesing the documentation from the
+Perl 6 code itself.
+
+2 Beneﬁts to the Perl/Open Source Community
+
+Synopsis 26, which speciﬁes the Perl 6 Pod format, is an obligatory part of a
+complete Perl 6 implementation. Right now Pod is silently ignored in Rakudo,
+while it should be accessible as an attribute of almost every object in the code.
+A Pod parser in Rakudo will also open a way to numerous userspace tools for
+generating formatted documentation, testing the docs coverage etc.
+
+3 Deliverables
+• Rakudo recognizes Pod in the Perl code as something more than a comment, parses it and produces the syntax tree, which can be used to generate
+the documentation in some other format like XHTML, TeX etc. There is
+an output generator in Rakudo producing the plaintext output.
+• The contents of Declarator Blocks are added to the compiled code and
+accessible via the .WHY method of an object, which is also spectested.
+• The Pod parser from Rakudo can be used in a Perl 6 code.
+
+4 Project Details
+
+There are already a few Perl 6 Pod parsers available: Perl6::Perldoc::Parser and
+Perl6::Pod for Perl 5, and Pod::Parser for Perl 6. What makes my project diﬀerent is that it’s not a separate parser module, but a signiﬁcant part of the Rakudo
+compiler itself, thus opening the way for making Declarator Blocks accesible at
+runtime. Rather than concentrating on the userspace tools to generate output,
+this projects aims for a comprehensive and well-tested Pod parser, fulﬁlling the
+Synopsis 26. Of course having a good implementation will make it possible to
+write a documentation generators like a perldoc utility, or for displaying the
+module reference for a Perl 6 module website, like modules.perl6.org or (one
+day) CPAN. The project also features ﬁxing and extending Synopsis 26 if there
+is a need to do this.
+
+The idea is to develop the parser as a separate class at the beginning, mainly
+to reduce the compilation time in the early stage of development, but also to
+make the biggest possible amount of code reuseable by the other implementations of Perl 6. Still, the most important goal of the project is a parser included
+and integrated with Rakudo
+If anything comes bad and the project won’t end up as expected, there is no
+possible chance that the Rakudo project will stay empty-handed. If not all the
+features will be implemented, there will be a speciﬁed and well-tested codebase
+possible to pick up and extend.
+If the project gets ﬁnished earlier, and I will have time to write something
+more, I would like to work on some userspace tools mentioned earlier, to improve
+the experience of not only the developers, but the users too.
+
+5 Project Schedule
+
+• Week #1-2, 24 – 28 May
+Write classes that represent POD AST nodes, along with tests to construct them and extract information from them. Analyze Perl 5 module
+Perl6::Pod and regular Rakudo AST nodes as a potential source of inspiration.
+
+• Week #2, 29 May – 4 June
+Make Rakudo able to parse the paragraph blocks and the abbreviated
+blocks in addition to delimeted block which it can parse now. Write extensive tests for that.
+
+• Week #3 and #4, 5 – 14 June
+Make the specialized blocks (code, comment, list) parsed correctly. Add
+tests for those.
+
+• 15 – 30 June (Week #5 and #6) is my exam session at the university.
+No work will probably be done then.
+
+• Week #7, 1 – 8 July
+Implement parsing one-letter blocks (B<>, I<>, L<> etc.) and nesting
+them. Implement tables. Write tests for the implemented things.
+
+• Week #7, 3 – 8 July
+Make sure the test suite covers the whole spec. Fix any slips caused by
+the exam session.
+
+• Week #8, 10 – 16 July
+Make the parse results accessible in the $=POD variable. Prepare the
+Midterm report, describe the status of the project and further plans.
+
+• MIDTERMS
+
+• Week #9, 17 – 23 July
+Make the documentation for classes, methods and subroutines accesible
+with the .WHY method. Add a spectests for that.
+
+• Week #10, 24 – 30 July
+Make Rakudo capable of ﬁring the DOC phasers (DOC use, DOC INIT).
+Write a basic output generator for the –doc command-line option.
+
+• Week #11, 31 July – 6 August
+Complete the output generator, implement the –doc command-line option
+and document it in Rakudo docs.
+
+• Week #12, 7 – 13 August
+Make sure that the Pod parser is accesible in the Perl 6 code and document
+its usage.
+
+• Week #13, 14 – 22 August
+Finish what was left undone, make sure the tests are well-written, the
+coverage is high and the documentation covers every aspect of a project.
+
+6 References and Likely Mentors
+
+I have spoken to Moritz Lenz, Carl Masak and Martin Berends about the
+project, from whom the ﬁrst two are listed as a mentors for this task. They
+gave me excellent feedback clearing up my doubts and showing me the most
+important and desired parts of the task.
+
+7 License
+
+The project, being the part of the Rakudo compiler, will be licensed under the
+same terms as Rakudo itself.
+
+8 Bio
+
+My name is Tadeusz Sośnierz, I am on a second year of Computer Science on
+Warsaw University of Technology in Poland. I have been using Perl 6 and
+Rakudo since spring 2010, publishing my Perl 6 code since July that year. I am
+involved in the module management, I am an author of neutro (now abandoned),
+and Panda, the only working module manager for Perl 6. I’m also an author of
+numerous modules (File::Find, Term::ANSIColor, Conﬁg::INI) and contributed
+to many others (including JSON, Web, HTTP::Server::Simple and Yapsi). I
+am a Rakudo contributor since autumn 2010, and I was a release manager in
+January 2011. The experience in working with Rakudo and Perl 6 itself, and
+knowing Rakudo’s capabilities and limitations makes me a good candidate to
+work on this project.
+Besides Perl and Perl 6, I’m involved in the Parrot project, I have contributed
+to Cardinal, the Ruby compiler for Parrot. I am also proﬁcient with the C
+programming language.
+
+9 Eligibility
+
+I am an eligible student with paperwork to prove it if necessary.
