@@ -49,4 +49,19 @@ is $r.content[1][1], '10';
 is $r.content[2][1], '33';
 is $r.content[3][1], '57';
 
+$x = q[
+=for table
+    mouse    | mice
+    horse    | horses
+    elephant | elephants
+];
+
+$r = Pod6::parse($x);
+is $r.content[0][0], 'mouse';
+is $r.content[0][1], 'mice';
+is $r.content[1][0], 'horse';
+is $r.content[1][1], 'horses';
+is $r.content[2][0], 'elephant';
+is $r.content[2][1], 'elephants';
+
 done;

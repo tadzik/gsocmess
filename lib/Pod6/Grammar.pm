@@ -157,7 +157,7 @@ grammar Pod6::Grammar {
     }
 
     token table_row {
-        \h* <table_cell> ** [ \h\h+ ] \n
+        \h* <table_cell> ** [ \h+'|'\h+ || \h+'+'\h+ || \h\h+ ] \n
     }
 
     token table_cell {
