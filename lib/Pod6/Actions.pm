@@ -75,6 +75,10 @@ class Pod6::Actions {
         make self.raw_block($/);
     }
 
+    method pod_block:sym<delimited_table>($/) {
+        make self.table($/);
+    }
+
     method pod_block:sym<paragraph>($/) {
         make self.any_block($/);
     }
@@ -83,12 +87,20 @@ class Pod6::Actions {
         make self.raw_block($/);
     }
 
+    method pod_block:sym<paragraph_table>($/) {
+        make self.table($/);
+    }
+
     method pod_block:sym<abbreviated>($/) {
         make self.any_block($/);
     }
 
     method pod_block:sym<abbreviated_raw>($/) {
         make self.raw_block($/);
+    }
+
+    method pod_block:sym<abbreviated_table>($/) {
+        make self.table($/);
     }
 
     method any_block($/) {
@@ -115,6 +127,25 @@ class Pod6::Actions {
             return Pod6::Block::Comment.new(content => @content);
         }
     }
+
+    method table($/) {
+        return Pod6::Block::Table.new(
+            content => $<table_content>.ast.list
+        );
+    }
+
+    method table_content($/) {
+        make $<table_row>».ast;
+    }
+
+    method table_row($/) {
+        make $<table_cell>».ast
+    }
+
+    method table_cell($/) {
+        make $/.Str;
+    }
+
     method list_item($/, @content) {
         return Pod6::Item.new(
             level   => $<type>.substr(4),

@@ -72,12 +72,20 @@ grammar Pod6::Grammar {
     }
 
     token pod_block:sym<delimited_raw> {
-        ^^ \h* '=begin' \h+ <!before 'END'>
-                        $<type>=[ 'code' || 'comment' ]
+        ^^ \h* '=begin' \h+ $<type>=[ 'code' || 'comment' ]
                         <pod_newline>+
         [
          $<pod_content> = [ .*? ]
          ^^ \h* '=end' \h+ $<type> <pod_newline>
+         ||  <.panic: '=begin without matching =end'>
+        ]
+    }
+
+    token pod_block:sym<delimited_table> {
+        ^^ \h* '=begin' \h+ 'table' <pod_newline>+
+        [
+         <table_content>
+         ^^ \h* '=end' \h+ 'table' <pod_newline>
          ||  <.panic: '=begin without matching =end'>
         ]
     }
@@ -109,10 +117,14 @@ grammar Pod6::Grammar {
     }
 
     token pod_block:sym<paragraph_raw> {
-        ^^ \h* '=for' \h+ <!before 'END'>
-                          $<type>=[ 'code' || 'comment' ]
+        ^^ \h* '=for' \h+ $<type>=[ 'code' || 'comment' ]
                           <pod_newline>
         $<pod_content> = <pod_text_para>
+    }
+
+    token pod_block:sym<paragraph_table> {
+        ^^ \h* '=for' \h+ 'table' <pod_newline>
+        <table_content>
     }
 
     token pod_block:sym<abbreviated> {
@@ -121,7 +133,7 @@ grammar Pod6::Grammar {
         {}
         :my $*VMARGIN := $<spaces>.to - $<spaces>.from;
         :my $*ALLOW_CODE := 0;
-        '=' <!before begin || end || for || END>
+        '=' <!before begin\s || end\s || for\s || END\s || table\s>
         $<type> = [
             <pod_code_parent> { $*ALLOW_CODE := 1 }
             || <identifier>
@@ -133,6 +145,26 @@ grammar Pod6::Grammar {
     token pod_block:sym<abbreviated_raw> {
         ^^ \h* '=' $<type>=[ 'code' || 'comment' ] \s
         $<pod_content> = <pod_text_para> *
+    }
+
+    token pod_block:sym<abbreviated_table> {
+        ^^ \h* '=table' <pod_newline>
+        <table_content>
+    }
+
+    token table_content {
+        <table_row>+
+    }
+
+    token table_row {
+        \h* <table_cell> ** [ \h\h+ ] \n
+    }
+
+    token table_cell {
+        <!before '=' \w> # no pod directives
+        [
+            <!before \h\h+ || \h'|'\h || \h'+'\h> \N
+        ]+
     }
 
     token pod_newline {
