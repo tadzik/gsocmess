@@ -156,8 +156,16 @@ grammar Pod6::Grammar {
         <table_row>+
     }
 
-    token table_row {
+    proto token table_row {
+        <...>
+    }
+
+    token table_row:sym<content> {
         \h* <table_cell> ** [ \h+'|'\h+ || \h+'+'\h+ || \h\h+ ] \n
+    }
+
+    token table_row:sym<separator> {
+        \h* [\h+ || '+'+ || '-'+ || '='+ || '_'+ ] \n
     }
 
     token table_cell {

@@ -64,4 +64,29 @@ is $r.content[1][1], 'horses';
 is $r.content[2][0], 'elephant';
 is $r.content[2][1], 'elephants';
 
+# disclamer: DO NOT treat this test as a source of knowlegde about fauna
+$x = q[
+=table
+    Animal | Legs |    Eats
+    =======================
+    Zebra  |   4  | Cookies
+    Human  |   2  |   Pizza
+    Shark  |   0  |    Fish
+];
+
+$r = Pod6::parse($x);
+is $r.headers[0], 'Animal';
+is $r.headers[1], 'Legs';
+is $r.headers[2], 'Eats';
+is $r.content[0][0], 'Zebra';
+is $r.content[0][1], '4';
+is $r.content[0][1], '4';
+is $r.content[0][2], 'Cookies';
+is $r.content[1][0], 'Human';
+is $r.content[1][1], '2';
+is $r.content[1][2], 'Pizza';
+is $r.content[2][0], 'Shark';
+is $r.content[2][1], '0';
+is $r.content[2][2], 'Fish';
+
 done;

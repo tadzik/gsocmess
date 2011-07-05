@@ -129,17 +129,69 @@ class Pod6::Actions {
     }
 
     method table($/) {
-        return Pod6::Block::Table.new(
-            content => $<table_content>.ast.list
-        );
+        return $<table_content>.ast;
     }
 
     method table_content($/) {
-        make $<table_row>».ast;
+        my @rows     = $<table_row>».ast;
+        # we need 3 informations about the separators:
+        #   how many of them are
+        #   where is the first one
+        #   are they different from each other
+        # Given no separators, our table is just an ordinary, one-lined
+        # table.
+        # If there is one separator, the table has a header and
+        # the actual content. If the first header is further than on the
+        # second row, then the header is multi-lined.
+        # If there's more than one separator, the table has a multi-line
+        # header and a multi-line content.
+        # Tricky, isn't it? Let's try to handle it sanely
+        my $sepnum        = 0;
+        my $firstsepindex = 0;
+        my $differentseps = 0;
+        my $firstsep;
+        for @rows.kv -> $k, $v {
+            if $v ~~ Str {
+                $sepnum++;
+                $firstsepindex or $firstsepindex = $k;
+                if $firstsep {
+                    if $firstsep ne $v { $differentseps = 1 }
+                } else {
+                    $firstsep = $v;
+                }
+            }
+        }
+        if $sepnum == 0 {
+            # ordinary table, nothing fancy
+            make Pod6::Block::Table.new(content => @rows);
+        } elsif $sepnum == 1 {
+            # header and a table
+            if $firstsepindex == 1 {
+                # one-lined header and a one-lined table
+                say '# one-lined header and a one-lined table';
+                my @head = @rows.shift.list;
+                @rows.shift;
+                make Pod6::Block::Table.new(
+                    headers => @head,
+                    content => @rows,
+                );
+            } else {
+                # multi-line header and a one-lined-table
+                say '# multi-line header and a one-lined-table';
+                make Pod6::Block::Table.new;
+            }
+        } else {
+            say '# multi-lined header and multi-lined table';
+            make Pod6::Block::Table.new;
+        }
     }
 
-    method table_row($/) {
+    method table_row:sym<content>($/) {
         make $<table_cell>».ast
+    }
+
+    method table_row:sym<separator>($/) {
+        make ~$/
     }
 
     method table_cell($/) {
