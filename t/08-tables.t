@@ -89,4 +89,20 @@ is $r.content[2][0], 'Shark';
 is $r.content[2][1], '0';
 is $r.content[2][2], 'Fish';
 
+$x = q[
+=table
+        Superhero     | Secret          | 
+                      | Identity        | Superpower
+        ==============|=================|================================
+        The Shoveller | Eddie Stevens   | King Arthur's singing shovel
+];
+
+$r = Pod6::parse($x);
+is $r.headers[0], 'Superhero';
+is $r.headers[1], 'Secret Identity';
+is $r.headers[2], 'Superpower';
+is $r.content[0][0], 'The Shoveller';
+is $r.content[0][1], 'Eddie Stevens';
+is $r.content[0][2], "King Arthur's singing shovel";
+
 done;

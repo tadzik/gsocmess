@@ -133,7 +133,8 @@ class Pod6::Actions {
     }
 
     method table_content($/) {
-        my @rows     = $<table_row>».ast;
+        my @rows = $<table_row>».ast;
+        @rows    = self.process_rows(@rows);
         # we need 3 informations about the separators:
         #   how many of them are
         #   where is the first one
@@ -178,7 +179,10 @@ class Pod6::Actions {
             } else {
                 # multi-line header and a one-lined-table
                 say '# multi-line header and a one-lined-table';
-                make Pod6::Block::Table.new;
+                make Pod6::Block::Table.new(
+                    headers => self.merge_rows(@rows[0..$firstsepindex-1]),
+                    content => @rows[$firstsepindex+1 .. *-1],
+                );
             }
         } else {
             say '# multi-lined header and multi-lined table';
@@ -186,15 +190,52 @@ class Pod6::Actions {
         }
     }
 
-    method table_row:sym<content>($/) {
-        make $<table_cell>».ast
+    method process_rows(@rows) {
+        # NOTE: This method uses as little of Perl 6 killer features as
+        # possible: I'm keeping in mind that it'll have to be translated
+        # to nqp quite soon
+
+        # find the longest leading whitespace and strip it from every row
+        # also remove trailing \n
+        my $w = -1;
+        for @rows -> $row {
+            $row ~~ /\s+/;
+            my $n = $/.to;
+            if $n < $w or $w == -1 {
+                $w = $n;
+            }
+        }
+        for @rows.kv -> $k, $v {
+            @rows[$k] = substr($v, $w).chomp;
+        }
+        # split the row between cells
+        my @res;
+        for @rows.kv -> $k, $v {
+            if $v ~~ /^'='+ || ^'-'+ || ^'_'+ || ^\h+$/ {
+                @res[$k] = $v;
+            } elsif $v.index('|') {
+                @res[$k] = $v.split(/\h+'|'\h+/);
+            } elsif $v.index('+') {
+                @res[$k] = $v.split(/\h+'+'\h+/);
+            } else {
+                @res[$k] = $v.split(/\h\h+/);
+            }
+        }
+        return @res;
     }
 
-    method table_row:sym<separator>($/) {
-        make ~$/
+    method merge_rows(@rows) {
+        my @result = @rows[0].list;
+        for 1..@rows.elems {
+            for @rows[$_].kv -> $k, $v {
+                @result[$k] = self.formatted_text(@result[$k] ~' '~ $v)
+                    if $v;
+            }
+        }
+        return @result;
     }
 
-    method table_cell($/) {
+    method table_row($/) {
         make $/.Str;
     }
 
